@@ -1,7 +1,6 @@
 #ifndef LCD_H
 #define LCD_H
 #include <avr/io.h>
-#include "general.h"
 #include "I2C.h"
 
 void initPinLCD();

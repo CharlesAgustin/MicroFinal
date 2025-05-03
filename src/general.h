@@ -1,1 +1,0 @@
-// this file is for ddefining the pins (general) either as output or input or I2C or PWM

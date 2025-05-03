@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <avr/interrupt.h>
 #include "buzzer.h"
-#include "general.h"
 #include "I2C.h"
 #include "keypad.h"
 #include "LCD.h"
