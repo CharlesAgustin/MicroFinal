@@ -12,7 +12,7 @@
 #define LCD_DATA 1
 
 void InitI2CPin();
-void StartI2CTrans(uint8_t SLA);
+void StartI2CTrans(uint8_t address);
 void StopI2CTrans();
 void Write(uint8_t data);
 void SendI2C(uint8_t value);
