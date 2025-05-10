@@ -21,14 +21,14 @@ void initPWMTimer2()
     // Set non-inverting mode on OC2A (Pin 11)
     TCCR2A |= (1 << COM2A1);
     TCCR2A &= ~(1 << COM2A0);
-    
+
     // Set initial duty cycle to 0 (silent)
     OCR2A = 0;
     TCCR2A &= ~(1 << COM2A1);
     TCCR2A &= ~(1 << COM2A0);
 
     // Set prescaler to 64 → good balance for audible tone range
-    TCCR2B |= (1 << CS22);                // CS22 = 1
+    TCCR2B |= (1 << CS22);                  // CS22 = 1
     TCCR2B &= ~((1 << CS21) | (1 << CS20)); // CS21 = 0, CS20 = 0
 }
 
@@ -47,39 +47,46 @@ void chirpBuzzer(float duty)
 {
     TCCR2A |= (1 << COM2A1);
     TCCR2A &= ~(1 << COM2A0);
-    
+
     changeDutyCycle(duty); // Turn on buzzer
     delayMs(100);          // Wait
     changeDutyCycle(0);    // Turn off buzzer
     delayMs(100);          // Wait
 }
 
-
-
-
-void initMotorPins() {
+void initMotorPins()
+{
     DDRE |= (1 << PE3); // Set Pin 5 (OC3A / PE3) as output
 }
 
-void initPWMTimer3() {
+void initPWMTimer3()
+{
     // Set Fast PWM Mode 14 (TOP = ICR3)
-    TCCR3A = (1 << COM3A1) | (1 << WGM31); // Clear OC3A on Compare Match, set at BOTTOM
+    TCCR3A = (1 << COM3A1) | (1 << WGM31);              // Clear OC3A on Compare Match, set at BOTTOM
     TCCR3B = (1 << WGM33) | (1 << WGM32) | (1 << CS31); // Prescaler = 8
 
-    ICR3 = 39999;  // 20ms period (50Hz) at 16MHz with prescaler 8
-    OCR3A = 3000;  // Initial pulse = 1.5ms (center position)
+    ICR3 = 39999; // 20ms period (50Hz) at 16MHz with prescaler 8
+    OCR3A = 3000; // Initial pulse = 1.5ms (center position)
 }
 
-void setMotorDirection(unsigned int angle) {
+void setMotorDirection(unsigned int angle) // Determine the pulse width based on the desired angle
+{
     int pulseWidth;
 
-    if (angle == -90) {
+    if (angle == -90)
+    {
         pulseWidth = 1000; // 1ms
-    } else if (angle == 0) {
+    }
+    else if (angle == 0)
+    {
         pulseWidth = 1500; // 1.5ms
-    } else if (angle == 90) {
+    }
+    else if (angle == 90)
+    {
         pulseWidth = 2000; // 2ms
-    } else {
+    }
+    else
+    {
         return; // Invalid input
     }
 
@@ -87,44 +94,51 @@ void setMotorDirection(unsigned int angle) {
     OCR3A = pulseWidth * 2;
 }
 
+void initMotorPins()
+{
+    DDRB |= (1 << PB5); // Pin 9 (OC1A) as output
+}
 
+void initPWMTimer1()
+{
+    // Set Fast PWM Mode 14 (TOP = ICR1)
+    TCCR1A = (1 << COM1A1) | (1 << WGM11);              // Clear OC1A on Compare Match, set at BOTTOM
+    TCCR1B = (1 << WGM13) | (1 << WGM12) | (1 << CS11); // Prescaler = 8
 
+    ICR1 = 39999; // TOP = 20ms period (50Hz) at 16MHz with prescaler 8
+    OCR1A = 3000; // Initial position: 1.5ms pulse width (center position for servo)
+}
 
-// void initMotorPins() {
-//     DDRB |= (1 << PB5); // Pin 9 (OC1A) as output
-// }
+void setMotorDirection(unsigned int angle)
+{
+    int pulseWidth;
 
-// void initPWMTimer1() {
-//     // Set Fast PWM Mode 14 (TOP = ICR1)
-//     TCCR1A = (1 << COM1A1) | (1 << WGM11); // Clear OC1A on Compare Match, set at BOTTOM
-//     TCCR1B = (1 << WGM13) | (1 << WGM12) | (1 << CS11); // Prescaler = 8
+    // Map angle to PWM pulse width (1000µs to 2000µs for servo)
+    if (angle == -90)
+    {
+        pulseWidth = 1000; // 1ms pulse
+    }
+    else if (angle == 0)
+    {
+        pulseWidth = 1500; // 1.5ms pulse (center)
+    }
+    else if (angle == 90)
+    {
+        pulseWidth = 2000; // 2ms pulse
+    }
+    else
+    {
+        return; // Invalid input — do nothing
+    }
 
-//     ICR1 = 39999; // TOP = 20ms period (50Hz) at 16MHz with prescaler 8
-//     OCR1A = 3000; // Initial position: 1.5ms pulse width (center position for servo)
-// }
+    // Directly convert the pulse width into the corresponding OCR1A value
+    // Pulse width is in microseconds (1000µs = 1ms) and OCR1A is in clock ticks (0.5µs per tick)
+    // Pulse width in microseconds / 0.5 = number of timer ticks (OCR1A)
+    int ticks = pulseWidth * 2; // Convert microseconds to timer ticks (0.5µs per tick)
 
-// void setMotorDirection(unsigned int angle) {
-//     int pulseWidth;
+    // Set OCR1A to the calculated pulse width in timer ticks
+    OCR1A = ticks;
 
-//     // Map angle to PWM pulse width (1000µs to 2000µs for servo)
-//     if (angle == -90) {
-//         pulseWidth = 1000; // 1ms pulse
-//     } else if (angle == 0) {
-//         pulseWidth = 1500; // 1.5ms pulse (center)
-//     } else if (angle == 90) {
-//         pulseWidth = 2000; // 2ms pulse
-//     } else {
-//         return; // Invalid input — do nothing
-//     }
-
-//     // Directly convert the pulse width into the corresponding OCR1A value
-//     // Pulse width is in microseconds (1000µs = 1ms) and OCR1A is in clock ticks (0.5µs per tick)
-//     // Pulse width in microseconds / 0.5 = number of timer ticks (OCR1A)
-//     int ticks = pulseWidth * 2; // Convert microseconds to timer ticks (0.5µs per tick)
-    
-//     // Set OCR1A to the calculated pulse width in timer ticks
-//     OCR1A = ticks;
-
-//     // The PWM signal will automatically be generated with the new pulse width
-//     // No need for manual toggling or delays anymore
-// }
+    // The PWM signal will automatically be generated with the new pulse width
+    // No need for manual toggling or delays anymore
+}
