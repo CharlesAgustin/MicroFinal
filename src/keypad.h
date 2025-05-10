@@ -2,8 +2,8 @@
 #ifndef KEYPAD_H
 #define KEYPAD_H
 
-#define TTP229_SCL_PIN 7  // SCL -> SCL pin on Arduino Mega
-#define TTP229_SDO_PIN 6  // SDO -> SDA pin on Arduino Mega
+#define TTP229_SCL_PIN 7 // SCL -> SCL pin on Arduino Mega
+#define TTP229_SDO_PIN 6 // SDO -> SDA pin on Arduino Mega
 
 // Constants for key mappings
 #define KEY_NUM_START 1
@@ -24,7 +24,6 @@ extern String displayText;
 extern String lastDisplayText;
 // extern bool keyPressed[16];
 
-
 void initKeypad();
 int readTTP229TouchKey();
 void processKeyPress(int key);
@@ -32,6 +31,7 @@ void processNumericModeKey(int key);
 void processAlphabetModeKey(int key);
 void processSpecialModeKey(int key);
 void updateAlphabetDisplay();
+void updateSpecialDisplay();
 void clearInput();
 
 #endif

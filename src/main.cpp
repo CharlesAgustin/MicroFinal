@@ -69,7 +69,7 @@ int main()
           keyPressed[i] = false;
       }
 
-      if (key == KEY_ACCEPT)
+      if (key == KEY_ACCEPT && displayText.length() == 4)
       {
         password = displayText;
         setMotorDirection(90);
@@ -122,7 +122,7 @@ int main()
           keyPressed[i] = false;
       }
 
-      if (key == KEY_ACCEPT)
+      if (key == KEY_ACCEPT && displayText.length() == 4)
       {
         if (displayText != password)
         {
@@ -191,7 +191,7 @@ int main()
           keyPressed[i] = false;
       }
 
-      if (key == KEY_ACCEPT)
+      if (key == KEY_ACCEPT && displayText.length() == 4)
       {
         lcdClear();
         lcdSetCursor(0, 0);
